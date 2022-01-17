@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Tawk.to HomeTest</string>
+    <string name="search_user">Search User</string>
+    <string name="company">Company:</string>
+    <string name="location">Location:</string>
+    <string name="name">Name:</string>
+    <string name="followers">Followers:</string>
+    <string name="following">Following:</string>
+    <string name="user_profile">User Profile</string>
+    <string name="notes">Notes</string>
+    <string name="save">Save</string>
+    <string name="blog">Blog:</string>
+    <!-- TODO: Remove or change this placeholder text -->
+</resources>
