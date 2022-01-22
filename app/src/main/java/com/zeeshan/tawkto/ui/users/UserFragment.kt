@@ -23,7 +23,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class UserFragment : Fragment(), UserAdapter.UserItemListener {
 
-
     private var binding: UserFragmentBinding by autoCleared()
     private val viewModel: UserViewModel by viewModels()
     private lateinit var userAdapter: UserAdapter
@@ -53,19 +52,28 @@ class UserFragment : Fragment(), UserAdapter.UserItemListener {
                 addOnScrollListener(this@UserFragment.scrollListener)
             }
         }
+
+        // search text change listener
         binding.etSearch.addTextChangedListener {
             userAdapter.filter.filter(it)
         }
         setupObservers()
+
+        // check fragment is being created
         if (isNewCreateFrag) {
             viewModel.setSince(nextSince)
             isNewCreateFrag = false
         }
     }
 
-
+    /**
+     * set up view model live data observers.
+     *
+     */
     private fun setupObservers() {
         viewModel.usersLiveData.observe(viewLifecycleOwner) {
+
+            // handle cases
             when (it.status) {
                 SUCCESS -> {
                     binding.rvUsers.visibility = View.VISIBLE
@@ -92,7 +100,10 @@ class UserFragment : Fragment(), UserAdapter.UserItemListener {
         }
     }
 
-
+    /**
+     * create and initialize recyclerView scroll listener for pagination
+     *
+     */
     private val scrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             super.onScrollStateChanged(recyclerView, newState)
@@ -118,12 +129,14 @@ class UserFragment : Fragment(), UserAdapter.UserItemListener {
 
                 if (shouldPaginate) {
                     isScrolling = false
+                    // call next pagination api
                     viewModel.setSince(nextSince)
                 }
             }
         }
     }
 
+    // navigate user detail fragment
     override fun onUserClicked(username: String) {
         findNavController().navigate(
             R.id.action_userFragment_to_userDetailFragment,
