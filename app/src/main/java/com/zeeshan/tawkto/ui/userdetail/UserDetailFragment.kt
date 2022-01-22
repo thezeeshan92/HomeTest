@@ -45,18 +45,27 @@ class UserDetailFragment : Fragment() {
             when (it.status) {
                 SUCCESS -> {
                     binding.clUserDetail.visibility = View.VISIBLE
+                    binding.tvNoInternet.visibility = View.GONE
                     binding.progressBar.visibility = View.GONE
                     bindCharacter(it.data!!)
                 }
 
                 Resource.Status.ERROR ->
-                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                    if (it.message.equals("Network Failure"))
+                        binding.tvNoInternet.visibility = View.VISIBLE
+                    else
+                        Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
 
                 Resource.Status.LOADING -> {
                     binding.clUserDetail.visibility = View.GONE
+                    binding.tvNoInternet.visibility = View.GONE
                     binding.progressBar.visibility = View.VISIBLE
                 }
             }
+        })
+
+        viewModel.userNoteLiveData.observe(viewLifecycleOwner, {
+            viewModel.notes = it
         })
     }
 
@@ -72,5 +81,7 @@ class UserDetailFragment : Fragment() {
             .load(userDetail.avatarUrl)
             .transform(CircleCrop())
             .into(binding.ivProfile)
+
+        binding.btnUpdate.setOnClickListener { viewModel.updateUserNote() }
     }
 }

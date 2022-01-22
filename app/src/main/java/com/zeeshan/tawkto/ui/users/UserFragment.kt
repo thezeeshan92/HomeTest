@@ -68,19 +68,26 @@ class UserFragment : Fragment(), UserAdapter.UserItemListener {
         viewModel.usersLiveData.observe(viewLifecycleOwner) {
             when (it.status) {
                 SUCCESS -> {
-                    binding.progressBar.visibility = View.GONE
                     binding.rvUsers.visibility = View.VISIBLE
                     if (!it.data.isNullOrEmpty()) {
                         userAdapter.addUserItem(ArrayList(it.data))
                         nextSince = it.data.last().id;
                     } else
                         isLastPage = true
+
+                    binding.progressBar.visibility = View.GONE
+                    binding.tvNoInternet.visibility = View.GONE
                 }
                 ERROR ->
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    if (it.message.equals("Network Failure"))
+                        binding.tvNoInternet.visibility = View.VISIBLE
+                    else
+                        Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
 
-                LOADING ->
+                LOADING -> {
                     binding.progressBar.visibility = View.VISIBLE
+                    binding.tvNoInternet.visibility = View.GONE
+                }
             }
         }
     }

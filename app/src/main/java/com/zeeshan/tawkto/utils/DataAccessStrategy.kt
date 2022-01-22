@@ -24,6 +24,7 @@ fun <T, A> performGetUserOperation(
             emitSource(source)
         }
     }
+
 fun <T> performGetUserDetailOperation(networkCall: suspend () -> Resource<T>)
         : LiveData<Resource<T>> =
     liveData(Dispatchers.IO) {
@@ -35,4 +36,15 @@ fun <T> performGetUserDetailOperation(networkCall: suspend () -> Resource<T>)
         } else if (responseStatus.status == Resource.Status.ERROR) {
             emit(Resource.error(responseStatus.message!!))
         }
+    }
+
+
+fun <T> performGetUserNoteOperation(
+    databaseQuery: () -> LiveData<T>,
+)
+        : LiveData<Resource<T>> =
+    liveData(Dispatchers.IO) {
+        emit(Resource.loading())
+        val source = databaseQuery.invoke().map { Resource.success(it) }
+        emitSource(source)
     }
